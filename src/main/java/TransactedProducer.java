@@ -47,7 +47,7 @@ public class TransactedProducer {
                 session.commit();
             }
         }
-//        session.commit();
+
         Instant finish2 = Instant.now();
         long elapsed2 = Duration.between(start2, finish2).toMillis();
         System.out.println("Прошло времени, мс: " + elapsed2);
