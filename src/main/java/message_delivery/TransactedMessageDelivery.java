@@ -13,10 +13,14 @@ public class TransactedMessageDelivery {
 
     public static Session createTransactedSession(Connection connection) throws JMSException {
         session = connection.createSession(true, Session.SESSION_TRANSACTED);
+        createProducerAndConsumer();
+        return session;
+    }
+
+    public static void createProducerAndConsumer() throws JMSException {
         Destination destination = session.createQueue(new ActiveMQConfiguration().getDestination());
         producer = session.createProducer(destination);
         consumer = session.createConsumer(destination);
-        return session;
     }
 
     public static void sendAndReceiveTransactedMessage() throws JMSException {

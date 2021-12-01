@@ -13,11 +13,15 @@ public class NonTransactedMessageDelivery {
 
     public static Session createNonTransactedSession(Connection connection) throws JMSException {
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        createProducerAndConsumer();
+        return session;
+    }
+
+    public static void createProducerAndConsumer() throws JMSException {
         Destination destination = session.createQueue(new ActiveMQConfiguration().getDestination());
         producer = session.createProducer(destination);
         consumer = session.createConsumer(destination);
         producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-        return session;
     }
 
     public static void sendAndReceiveNonTransactedMessage() throws JMSException {
