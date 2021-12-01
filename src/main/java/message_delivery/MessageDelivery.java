@@ -14,28 +14,32 @@ public class MessageDelivery {
     private static Session session;
     private static MessageProducer producer;
     private static MessageConsumer consumer;
-    private static Destination destination;
 
     public void dispatchMessage(boolean isTransacted) throws Exception {
         BrokerConfiguration brokerConfiguration = new BrokerConfiguration();
         BrokerService broker = brokerConfiguration.createBroker();
-        broker.start();
+        try {
+            broker.start();
 
-        AMQConfiguration = new ActiveMQConfiguration();
-        connection = AMQConfiguration.connectToActiveMQ();
-        connection.start();
+            AMQConfiguration = new ActiveMQConfiguration();
+            connection = AMQConfiguration.connectToActiveMQ();
+            connection.start();
 
-        if (isTransacted) {
-            createTransactedSession();
-            sendAndReceiveTransactedMessage();
-        } else {
-            createNonTransactedSession();
-            sendAndReceiveNonTransactedMessage();
+            if (isTransacted) {
+                createTransactedSession();
+                sendAndReceiveTransactedMessage();
+            } else {
+                createNonTransactedSession();
+                sendAndReceiveNonTransactedMessage();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            session.close();
+            connection.close();
+            broker.stop();
         }
-
-        session.close();
-        connection.close();
-        broker.stop();
     }
 
     public void createNonTransactedSession() throws JMSException {
@@ -59,8 +63,8 @@ public class MessageDelivery {
             TextMessage textMessage = (TextMessage) consumer.receive();
         }
         Instant finishNonTransactedConsumer = Instant.now();
-        long elapsedTransactedConsumer = Duration.between(startNonTransactedConsumer, finishNonTransactedConsumer).toMillis();
-        System.out.println("Время, которое заняло получение сообщений в нетранзакционном режиме, мс: " + elapsedTransactedConsumer );
+        long elapsedNonTransactedConsumer = Duration.between(startNonTransactedConsumer, finishNonTransactedConsumer).toMillis();
+        System.out.println("Время, которое заняло получение сообщений в нетранзакционном режиме, мс: " + elapsedNonTransactedConsumer );
     }
 
     public void createTransactedSession() throws JMSException {
@@ -94,7 +98,7 @@ public class MessageDelivery {
     }
 
     public void createProducerAndConsumer() throws JMSException {
-        destination = session.createQueue(AMQConfiguration.getDestination());
+        Destination destination = session.createQueue(AMQConfiguration.getDestination());
         producer = session.createProducer(destination);
         consumer = session.createConsumer(destination);
     }
