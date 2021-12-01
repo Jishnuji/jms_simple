@@ -18,11 +18,11 @@ public class MessageDelivery {
     public void dispatchMessage(boolean isTransacted) throws Exception {
         BrokerConfiguration brokerConfiguration = new BrokerConfiguration();
         BrokerService broker = brokerConfiguration.createBroker();
+        AMQConfiguration = new ActiveMQConfiguration();
+        connection = AMQConfiguration.connectToActiveMQ();
+
         try {
             broker.start();
-
-            AMQConfiguration = new ActiveMQConfiguration();
-            connection = AMQConfiguration.connectToActiveMQ();
             connection.start();
 
             if (isTransacted) {
@@ -36,8 +36,10 @@ public class MessageDelivery {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            session.close();
-            connection.close();
+            if(session != null && connection != null) {
+                session.close();
+                connection.close();
+            }
             broker.stop();
         }
     }
