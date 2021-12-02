@@ -24,7 +24,7 @@ public class NonTransactedMessageDelivery {
         producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
     }
 
-    public static void sendAndReceiveNonTransactedMessage() throws JMSException {
+    public static void sendAndReceive() throws JMSException {
         Instant startNonTransactedProducer = Instant.now();
         for (int i = 0; i < 100_000; i++) {
             Message message = session.createTextMessage("message " + i);

@@ -23,7 +23,7 @@ public class TransactedMessageDelivery {
         consumer = session.createConsumer(destination);
     }
 
-    public static void sendAndReceiveTransactedMessage() throws JMSException {
+    public static void sendAndReceive() throws JMSException {
         Instant startTransactedProducer = Instant.now();
         for (int i = 0; i <= 100_000; i++) {
             Message message = session.createTextMessage("message " + i);

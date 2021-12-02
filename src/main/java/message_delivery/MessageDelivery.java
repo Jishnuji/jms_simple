@@ -22,10 +22,10 @@ public class MessageDelivery {
 
             if (isTransacted) {
                 session = TransactedMessageDelivery.createTransactedSession(connection);
-                TransactedMessageDelivery.sendAndReceiveTransactedMessage();
+                TransactedMessageDelivery.sendAndReceive();
             } else {
                 session = NonTransactedMessageDelivery.createNonTransactedSession(connection);
-                NonTransactedMessageDelivery.sendAndReceiveNonTransactedMessage();
+                NonTransactedMessageDelivery.sendAndReceive();
             }
 
         } catch (Exception e) {
