@@ -7,7 +7,7 @@ import javax.jms.JMSException;
 
 public class ActiveMQConfiguration {
     private final String BROKER_URL = "vm://service";
-    private final String DESTINATION = "message.queue";
+    private static final String DESTINATION = "message.queue";
 
     public Connection connectToActiveMQ() {
         ActiveMQConnectionFactory cf =
@@ -23,7 +23,7 @@ public class ActiveMQConfiguration {
         return connection;
     }
 
-    public String getDestination() {
+    public static String getDestination() {
         return DESTINATION;
     }
 }

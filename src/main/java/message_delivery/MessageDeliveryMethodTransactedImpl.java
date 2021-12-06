@@ -6,24 +6,24 @@ import javax.jms.*;
 import java.time.Duration;
 import java.time.Instant;
 
-public class TransactedMessageDelivery {
+public class MessageDeliveryMethodTransactedImpl implements MessageDeliveryMethod {
     private static Session session;
     private static MessageProducer producer;
     private static MessageConsumer consumer;
 
-    public static Session createTransactedSession(Connection connection) throws JMSException {
+    public Session createSession(Connection connection) throws JMSException {
         session = connection.createSession(true, Session.SESSION_TRANSACTED);
         createProducerAndConsumer();
         return session;
     }
 
-    public static void createProducerAndConsumer() throws JMSException {
-        Destination destination = session.createQueue(new ActiveMQConfiguration().getDestination());
+    public void createProducerAndConsumer() throws JMSException {
+        Destination destination = session.createQueue(ActiveMQConfiguration.getDestination());
         producer = session.createProducer(destination);
         consumer = session.createConsumer(destination);
     }
 
-    public static void sendAndReceive() throws JMSException {
+    public void sendAndReceive() throws JMSException {
         Instant startTransactedProducer = Instant.now();
         for (int i = 0; i <= 100_000; i++) {
             Message message = session.createTextMessage("message " + i);

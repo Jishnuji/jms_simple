@@ -9,6 +9,7 @@ import javax.jms.Session;
 
 public class MessageDelivery {
     private static Session session;
+    private static MessageDeliveryMethod deliveryMethod;
 
     public void dispatchMessage(boolean isTransacted) throws Exception {
         BrokerConfiguration brokerConfiguration = new BrokerConfiguration();
@@ -21,12 +22,13 @@ public class MessageDelivery {
             connection.start();
 
             if (isTransacted) {
-                session = TransactedMessageDelivery.createTransactedSession(connection);
-                TransactedMessageDelivery.sendAndReceive();
+                deliveryMethod = new MessageDeliveryMethodTransactedImpl();
             } else {
-                session = NonTransactedMessageDelivery.createNonTransactedSession(connection);
-                NonTransactedMessageDelivery.sendAndReceive();
+                deliveryMethod = new MessageDeliveryMethodNonTransactedImpl();
             }
+
+            session = deliveryMethod.createSession(connection);
+            deliveryMethod.sendAndReceive();
 
         } catch (Exception e) {
             e.printStackTrace();

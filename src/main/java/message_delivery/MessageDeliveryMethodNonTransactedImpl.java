@@ -6,25 +6,25 @@ import javax.jms.*;
 import java.time.Duration;
 import java.time.Instant;
 
-public class NonTransactedMessageDelivery {
+public class MessageDeliveryMethodNonTransactedImpl implements MessageDeliveryMethod {
     private static Session session;
     private static MessageProducer producer;
     private static MessageConsumer consumer;
 
-    public static Session createNonTransactedSession(Connection connection) throws JMSException {
+    public Session createSession(Connection connection) throws JMSException {
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         createProducerAndConsumer();
         return session;
     }
 
-    public static void createProducerAndConsumer() throws JMSException {
-        Destination destination = session.createQueue(new ActiveMQConfiguration().getDestination());
+    public void createProducerAndConsumer() throws JMSException {
+        Destination destination = session.createQueue(ActiveMQConfiguration.getDestination());
         producer = session.createProducer(destination);
         consumer = session.createConsumer(destination);
         producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
     }
 
-    public static void sendAndReceive() throws JMSException {
+    public void sendAndReceive() throws JMSException {
         Instant startNonTransactedProducer = Instant.now();
         for (int i = 0; i < 100_000; i++) {
             Message message = session.createTextMessage("message " + i);
